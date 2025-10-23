@@ -1,0 +1,16 @@
+langchain
+langchain-groq
+langchain-neo4j
+langchain-core
+langgraph
+neo4j
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+python-dotenv
