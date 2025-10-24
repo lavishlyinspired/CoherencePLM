@@ -1,14 +1,14 @@
 """LangGraph workflow definition."""
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
-from nodes import (
+from backend.nodes.nodes import (
     KeywordState,
     generate_keywords,
     generate_requirements,
     generate_risks,
     call_save_tool
 )
-from logger import logger
+from backend.logger.logger import logger
 
 def should_regenerate(state: KeywordState) -> str:
     """Check regeneration flag."""

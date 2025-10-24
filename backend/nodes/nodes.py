@@ -6,11 +6,11 @@ from langgraph.graph import MessagesState
 from typing import Optional, List, Dict
 import json
 import re
-from config import settings
-from models import KeywordOutput, RequirementsOutput, RisksOutput
-from logger import logger
-from tools import save_to_neo4j
-
+from backend.config.config import settings
+from backend.model.models import KeywordOutput, RequirementsOutput, RisksOutput
+from backend.logger.logger import logger
+from backend.tools.tools import save_to_neo4j
+from backend.tools.tools import graph_db
 llm = ChatGroq(model=settings.llm_model)
 
 class KeywordState(MessagesState):

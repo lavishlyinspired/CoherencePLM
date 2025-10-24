@@ -2,8 +2,9 @@
 from typing import Dict, List, Optional, Any
 from neo4j import GraphDatabase
 import logging
-
 from config import settings
+
+from backend.config.config import settings
 logger = logging.getLogger(__name__)
 
 class TraceabilityService:
@@ -27,9 +28,9 @@ class TraceabilityService:
         MATCH (p:Project {name: $project_name})
         OPTIONAL MATCH (p)-[:HAS_REQUIREMENT]->(r:Requirement)
         OPTIONAL MATCH (r)-[:HAS_RISK]->(rk:Risk)
-        
+
         WITH p, r, rk
-        
+
         // Create node objects
         WITH collect(DISTINCT {
             id: p.name,
@@ -39,7 +40,7 @@ class TraceabilityService:
         }) as project_nodes,
         collect(DISTINCT CASE WHEN r IS NOT NULL THEN {
             id: 'REQ_' + toString(r.index),
-            type: 'Requirement', 
+            type: 'Requirement',
             label: r.description,
             properties: properties(r)
         } END) as req_nodes,
@@ -49,24 +50,24 @@ class TraceabilityService:
             label: rk.description,
             properties: properties(rk)
         } END) as risk_nodes
-        
+
         // Combine and filter nulls
         WITH (project_nodes + req_nodes + risk_nodes) as all_nodes
         UNWIND all_nodes as node
         WITH node WHERE node IS NOT NULL
         RETURN collect(node) as nodes
         """
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query, project_name=project_name)
             record = result.single()
             nodes_data = record["nodes"] if record else []
-            
+
             # Get relationships
             links = self._get_relationships(project_name)
-            
+
             logger.info(f"Found {len(nodes_data)} nodes and {len(links)} links for project {project_name}")
-            
+
             return {
                 "nodes": nodes_data,
                 "links": links
@@ -77,17 +78,17 @@ class TraceabilityService:
         query = """
         MATCH (p:Project {name: $project_name})-[:HAS_REQUIREMENT]->(r:Requirement)
         OPTIONAL MATCH (r)-[:HAS_RISK]->(rk:Risk)
-        
+
         WITH r, rk
         WHERE rk IS NOT NULL
-        
+
         RETURN collect({
             source: 'REQ_' + toString(r.index),
             target: 'RISK_' + toString(rk.index),
             type: 'HAS_RISK'
         }) as relationships
         """
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query, project_name=project_name)
             record = result.single()
@@ -100,13 +101,13 @@ class TraceabilityService:
             req_index = int(requirement_id.split('_')[-1])
         except:
             req_index = 1
-        
+
         query = """
         MATCH (p:Project {name: $project_name})-[:HAS_REQUIREMENT]->(r:Requirement {index: $req_index})
         OPTIONAL MATCH (r)-[:HAS_RISK]->(rk:Risk)
-        
+
         WITH r, rk
-        
+
         WITH collect(DISTINCT {
             id: 'REQ_' + toString(r.index),
             type: 'Requirement',
@@ -119,21 +120,21 @@ class TraceabilityService:
             label: rk.description,
             properties: properties(rk)
         } END) as risk_nodes
-        
+
         WITH (req_nodes + risk_nodes) as all_nodes
         UNWIND all_nodes as node
         WITH node WHERE node IS NOT NULL
         RETURN collect(node) as nodes
         """
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query, project_name=project_name, req_index=req_index)
             record = result.single()
             nodes_data = record["nodes"] if record else []
-            
+
             # Get relationships for this requirement
             links = self._get_requirement_relationships(project_name, req_index)
-            
+
             return {
                 "nodes": nodes_data,
                 "links": links
@@ -149,7 +150,7 @@ class TraceabilityService:
             type: 'HAS_RISK'
         }) as relationships
         """
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query, project_name=project_name, req_index=req_index)
             record = result.single()
@@ -160,13 +161,13 @@ class TraceabilityService:
         query = """
         MATCH (r:Requirement)
         OPTIONAL MATCH (r)-[:HAS_RISK]->(risk:Risk)
-        
-        WITH r, 
+
+        WITH r,
              collect(DISTINCT risk) as risks,
              r.description as req_desc,
              coalesce(r.id, 'REQ_' + toString(r.index)) as req_id,
              coalesce(r.priority, 'Medium') as req_priority
-        
+
         RETURN {
             requirement: {
                 id: req_id,
@@ -187,19 +188,19 @@ class TraceabilityService:
         } as traceability_data
         ORDER BY req_desc
         """
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query)
             data = [record["traceability_data"] for record in result]
-            
+
             logger.info(f"Found {len(data)} requirements for traceability table")
-            
+
             return data
 
     def get_traceability_projects(self) -> List[str]:
         """Get list of projects available for traceability"""
         query = "MATCH (p:Project) RETURN p.name as name ORDER BY p.name"
-        
+
         with self.driver.session(database=settings.neo4j_database) as session:
             result = session.run(query)
             projects = [record["name"] for record in result]

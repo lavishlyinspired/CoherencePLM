@@ -2,8 +2,8 @@
 from langchain_core.tools import tool
 from langchain_neo4j import Neo4jGraph
 from typing import List,Dict,Annotated
-from config import settings
-from logger import logger
+from backend.config.config import settings
+from backend.logger.logger import logger
 
 # Initialize Neo4j - Make this accessible for direct queries
 graph_db = Neo4jGraph(

@@ -3,7 +3,7 @@ import logging
 import sys
 from pathlib import Path
 from typing import Optional
-from config import settings
+from backend.config.config import settings
 
 class SafeColoredFormatter(logging.Formatter):
     """Custom formatter with colors for console output and Unicode safety."""

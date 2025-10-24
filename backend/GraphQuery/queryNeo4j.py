@@ -1,7 +1,7 @@
 """Complete Fixed Neo4j Graph Query Tool with Proper Answer Formatting."""
 from langchain_neo4j import GraphCypherQAChain, Neo4jGraph
 from langchain_groq import ChatGroq
-from config import settings
+from backend.config.config import settings
 from collections import Counter
 import re
 

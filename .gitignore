@@ -28,3 +28,5 @@ __pycache__
 backend\.env
 backend\config.py
 requirements-app\src\components\nvl\creds.ts
+
+requirements-app\node_modules
