@@ -1,0 +1,149 @@
+/* src/components/TopNavBar/TopNavBar.css */
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  height: 60px;
+  background-color: #1f2937; /* dark gray */
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.top-navbar.light {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  padding: 6px 8px 6px 30px;
+  border-radius: 4px;
+  border: none;
+  outline: none;
+  width: 260px;
+  background-color: #374151;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+  background-color: #4b5563;
+}
+
+.top-navbar.light .search-box input {
+  background-color: #e2e2e2;
+  color: #333;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-navbar.light .icon-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.user-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-icon {
+  font-size: 20px;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 36px;
+  background-color: #2d3748;
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 130px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  color: white;
+  text-align: left;
+  z-index: 999;
+}
+
+.dropdown p {
+  margin: 0;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown p:hover {
+  background-color: #4a5568;
+}
+
+.dropdown .logout {
+  color: #f87171;
+}
+
+.user-menu:hover .dropdown {
+  display: block;
+}
+
+/* Light mode dropdown */
+.top-navbar.light .dropdown {
+  background-color: white;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.top-navbar.light .dropdown p:hover {
+  background-color: #eee;
+}
+
+/* Light mode toggle */
+body.light-mode {
+  background-color: #f9fafb;
+  color: #111;
+}
